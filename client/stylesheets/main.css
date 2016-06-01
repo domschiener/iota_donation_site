@@ -1,0 +1,207 @@
+@import url(https://fonts.googleapis.com/css?family=Lato:400,900,300);
+
+
+* {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  outline: none;
+  -webkit-border-radius: 0;
+}
+
+body {
+  font-family: 'Lato', sans-serif;
+  height: 100%;
+  width: 100%;
+
+}
+
+.landing {
+  width: 100%;
+  min-height: 100vh;
+  background-image: -webkit-radial-gradient(top, circle cover, #6b826b, #3c643c 75%);
+  background-image: -moz-radial-gradient(top, circle cover, #6b826b, #3c643c 75%);
+  background-image: -o-radial-gradient(top, circle cover, #6b826b, #3c643c 75%);
+  background-image: radial-gradient(top, circle cover, #6b826b, #3c643c 75%);
+  overflow: hidden;
+  padding: 0;
+}
+
+.header_title {
+  position: relative;
+  margin-top: 85px;
+  color: #fff;
+}
+
+.header {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  min-height: 100vh;
+
+  z-index: -1;
+  padding: 0;
+}
+
+.logo {
+  width: 150px;
+  height: 150px;
+}
+
+.more_btn {
+  margin: 0 auto;
+  text-align: center;
+  width: 80%;
+  height: auto;
+}
+
+.participate {
+  position: absolute;
+  width: 200px;
+  height: 60px;
+  margin: 50px 0;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+      -ms-transform: translateX(-50%) translateY(-50%);
+          transform: translateX(-50%) translateY(-50%);
+}
+
+.participate {
+  background: #333;
+  color: #ccc;
+  border: 0;
+  font-size: 22px;
+  border-radius: 4px;
+  -webkit-transition: .6s;
+          transition: .6s;
+  overflow: hidden;
+}
+
+.participate:focus {
+  outline: 0;
+}
+.participate:before {
+  content: '';
+  display: block;
+  position: absolute;
+  background: rgba(255, 255, 255, 0.5);
+  width: 60px;
+  height: 100%;
+  left: 0;
+  top: 0;
+  opacity: .5;
+  -webkit-filter: blur(30px);
+          filter: blur(30px);
+  -webkit-transform: translateX(-100px) skewX(-15deg);
+      -ms-transform: translateX(-100px) skewX(-15deg);
+          transform: translateX(-100px) skewX(-15deg);
+}
+.participate:after {
+  content: '';
+  display: block;
+  position: absolute;
+  background: rgba(255, 255, 255, 0.2);
+  width: 30px;
+  height: 100%;
+  left: 30px;
+  top: 0;
+  opacity: 0;
+  -webkit-filter: blur(5px);
+          filter: blur(5px);
+  -webkit-transform: translateX(-100px) skewX(-15deg);
+      -ms-transform: translateX(-100px) skewX(-15deg);
+          transform: translateX(-100px) skewX(-15deg);
+}
+.participate:hover {
+  background: #191919;
+  cursor: pointer;
+}
+.participate:hover:before {
+  -webkit-transform: translateX(300px) skewX(-15deg);
+      -ms-transform: translateX(300px) skewX(-15deg);
+          transform: translateX(300px) skewX(-15deg);
+  opacity: 0.6;
+  -webkit-transition: .7s;
+          transition: .7s;
+}
+.participate:hover:after {
+  -webkit-transform: translateX(300px) skewX(-15deg);
+      -ms-transform: translateX(300px) skewX(-15deg);
+          transform: translateX(300px) skewX(-15deg);
+  opacity: 1;
+  -webkit-transition: .7s;
+          transition: .7s;
+}
+
+
+.funding {
+  margin-top: 200px;
+  text-align: center;
+}
+
+/* Addresses Section */
+
+.addresses {
+  position: relative;
+  background-color: #eee;
+  overflow: hidden;
+  min-height: 450px;
+}
+
+.addresses__title {
+  margin: 50px auto;
+  text-align: center;
+}
+
+.addresses__title h1 {
+  font-size: 54px;
+  font-weight: 700;
+}
+
+.table-fill {
+  background: white;
+  border-radius: 4px;
+  max-width: 800px;
+  padding:5px;
+  width: 100%;
+  margin: 50px auto;
+  border-collapse: collapse;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+th {
+  color:#D5DDE5;;
+  background:#1b1e24;
+  border-bottom:4px solid #9ea7af;
+  border-right: 1px solid #343a45;
+  font-size:23px;
+  font-weight: 100;
+  border-radius: 4px;
+  padding: 24px;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  vertical-align:middle;
+  text-align: center;
+}
+
+tr {
+  border-top: 1px solid #C1C3D1;
+  border-bottom: 1px solid #C1C3D1;
+  color:#666B85;
+  font-size:16px;
+  font-weight:normal;
+  text-shadow: 0 1px 1px rgba(256, 256, 256, 0.1);
+}
+
+td {
+  background:#FFFFFF;
+  padding:20px;
+  text-align: center;
+  vertical-align: middle;
+  font-weight:300;
+  font-size:18px;
+  text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+  border-right: 1px solid #C1C3D1;
+}
