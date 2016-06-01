@@ -5,6 +5,7 @@
  *
  * Liquid Fill Gauge v1.1
  */
+
 function liquidFillGaugeDefaultSettings(){
     return {
         minValue: 0, // The gauge minimum value.
@@ -276,9 +277,14 @@ Template.main.onCreated(function() {
 });
 
 Template.main.onRendered(function() {
-  $(function () {
-    $('[data-toggle="popover"]').popover()
-  })
+  $('body').popover({
+      selector: '[data-toggle="popover"]',
+      trigger: 'click',
+      html: true,
+      content: function () {
+          return $(this).parents('.row').first().find('.metaContainer').html();
+      }
+  });
 
   Meteor.call('getAccounts', function(error, success) {
     accountList = success.addressList;
