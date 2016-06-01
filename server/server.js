@@ -92,3 +92,9 @@ Meteor.startup(function() {
     });
   }, 300000)
 })
+
+Meteor.methods({
+  getAccounts: function() {
+    return addresses.find({}).fetch()[0]
+  }
+})

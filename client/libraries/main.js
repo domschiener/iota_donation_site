@@ -268,30 +268,66 @@ function loadLiquidFillGauge(elementId, value, config) {
 }
 
 
-Template.main.rendered = function() {
-  var config5 = liquidFillGaugeDefaultSettings();
-  config5.circleThickness = 0.4;
-  config5.circleColor = "#1B49A6";
-  config5.textColor = "#fff";
-  config5.waveTextColor = "#FFF";
-  config5.waveColor = "#1771BF";
-  config5.textVertPosition = 0.52;
-  config5.waveAnimateTime = 5000;
-  config5.waveHeight = 0;
-  config5.waveAnimate = false;
-  config5.waveCount = 2;
-  config5.waveOffset = 0.25;
-  config5.textSize = 1.2;
-  config5.minValue = 0;
-  config5.maxValue = 100;
-  config5.displayPercent = false;
-  var gauge6 = loadLiquidFillGauge("fillgauge6", 50, config5);
+Template.main.onCreated(function() {
+  var self = this;
+  self.autorun(function() {
+    self.subscribe('addressList');
+  });
+});
 
-  function NewValue(){
-      if(Math.random() > .5){
-          return Math.round(Math.random()*100);
-      } else {
-          return (Math.random()*100).toFixed(1);
-      }
+Template.main.onRendered(function() {
+  $(function () {
+    $('[data-toggle="popover"]').popover()
+  })
+
+  Meteor.call('getAccounts', function(error, success) {
+    accountList = success.addressList;
+    var total = 0;
+    for (var i = 0; i < accountList.length; i++) {
+      total += accountList[i].value;
+    }
+    var fundingGoal = Math.round(2779530283277761 * 0.05);
+    var current = Math.round((total * 100) / fundingGoal) + 33;
+    var config5 = liquidFillGaugeDefaultSettings();
+    config5.circleThickness = 0.4;
+    config5.circleColor = "#1B49A6";
+    config5.textColor = "#fff";
+    config5.waveTextColor = "#FFF";
+    config5.waveColor = "#1771BF";
+    config5.textVertPosition = 0.52;
+    config5.waveAnimateTime = 5000;
+    config5.waveHeight = 0;
+    config5.waveAnimate = false;
+    config5.waveCount = 2;
+    config5.waveOffset = 0.25;
+    config5.textSize = 1.2;
+    config5.minValue = 0;
+    config5.maxValue = 100;
+    config5.displayPercent = false;
+    var gauge6 = loadLiquidFillGauge("fillgauge6", current, config5);
+  })
+})
+
+Template.main.helpers({
+  allAddresses: function() {
+    return addresses.find({}).fetch()[0];
+  },
+  getPerc: function(value) {
+    var maxValue = 3812798742493;
+    return Math.round((value * 100) / maxValue);
+  },
+  getTotal: function(accountList) {
+    var total = 45862249674083;
+    for (var i = 0; i < accountList.length; i++) {
+      total += accountList[i].value;
+    }
+
+    return (total / 1000000000000).toFixed(4);
   }
-}
+})
+
+Template.main.events({
+  'click .participate': function() {
+    window.location = "http://forum.iotatoken.com/t/iota-foundation-donation-info/354";
+  }
+})
