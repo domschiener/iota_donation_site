@@ -288,12 +288,12 @@ Template.main.onRendered(function() {
 
   Meteor.call('getAccounts', function(error, success) {
     accountList = success.addressList;
-    var total = 0;
+    var total = 59320043461491;
     for (var i = 0; i < accountList.length; i++) {
       total += accountList[i].value;
     }
     var fundingGoal = Math.round(2779530283277761 * 0.05);
-    var current = Math.round((total * 100) / fundingGoal) + 33;
+    var current = Math.round((total * 100) / fundingGoal);
     var config5 = liquidFillGaugeDefaultSettings();
     config5.circleThickness = 0.4;
     config5.circleColor = "#1B49A6";
@@ -322,8 +322,17 @@ Template.main.helpers({
     var maxValue = 3812798742493;
     return Math.round((value * 100) / maxValue);
   },
+  isDone: function(value) {
+    return Math.round((value * 100) / 3812798742493) > 90 ? "isDone" : "";
+  },
+  getGiValue: function(value) {
+    return (value / 1000000000).toFixed(6);
+  },
+  shouldDisplay: function(value, address) {
+    return Math.round((value * 100) / 3812798742493) > 90 ? "This address is nearly full. Use another one" : address;
+  },
   getTotal: function(accountList) {
-    var total = 45862249674083;
+    var total = 59320043461491;
     for (var i = 0; i < accountList.length; i++) {
       total += accountList[i].value;
     }

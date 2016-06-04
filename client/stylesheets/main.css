@@ -209,3 +209,8 @@ td {
 .popover {
   max-width: 800px !important;
 }
+
+.isDone td {
+  background-color: #66c184;
+  color: #fff;
+}

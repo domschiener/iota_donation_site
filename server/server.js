@@ -64,6 +64,7 @@ Meteor.startup(function() {
             HTTP.call('POST', 'http://localhost:999', {'data': analyzeTxCommand}, function(err, data) {
 
               if (!err) {
+
                 var preparedTransfers = {}
                 for (var i = 0; i < data.data.transactions.length; i++) {
                   preparedTransfers[data.data.transactions[i].address] = preparedTransfers[data.data.transactions[i].address] ? preparedTransfers[data.data.transactions[i].address] += parseInt(data.data.transactions[i].value) : preparedTransfers[data.data.transactions[i].address] = parseInt(data.data.transactions[i].value)

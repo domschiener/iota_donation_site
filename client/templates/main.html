@@ -51,11 +51,11 @@
           </tr>
           {{#with allAddresses}}
             {{#each this.addressList}}
-              <tr>
+              <tr class="{{isDone value}}">
                 <td class="iota__address">
-                  <button type="button" class="btn btn-success" data-toggle="popover" title="Donation Address" data-content="{{address}}">Click for Address</button>
+                  <button type="button" class="btn btn-success" data-toggle="popover" title="Donation Address" data-content="{{shouldDisplay value address}}">Click for Address</button>
                 </td>
-                <td class="iota__amount">{{value}}</td>
+                <td class="iota__amount">{{getGiValue value}} Gi</td>
                 <td class="iota__full">{{getPerc value}} %</td>
               </tr>
             {{/each}}
