@@ -7,25 +7,28 @@ Meteor.startup(function() {
     if (!accounts) {
       var valuesToInsert = [
         {
-          'address': 'LQBSSGJHAEAWCOSOLUIVVEOZRWNOXIRESSEEQQDSIJWUDVLNIKCHHUTVPYCHCSWPIJKILRDRPRSAVRVKS',
+          'address': 'IEOO9BOG9DNUYL9ZSTSNMIURBRXWTMNKYKNYEMB9AYYCB9XJOYNPSRPZMSACRROQCZZGFJQCOFARH9LVAFWJFLQPTY',
           'value': 0
         }, {
-          'address': 'SFLYEYPJKFKBRLHDVDTQJOTXDDVOGISLPWXPIBZKOM9EFGYKJGKQUYGXEKVKEFMDQNYGBNUVWSR9ZVRBV',
+          'address': 'KIYFEAVBPGZMYNZCGBUSBKMCOHUPNKFYUZS9VDPZBHEIGCKOVEFXPOHQBTJAPYBPVQVTJJRFIDUUUDQQYQRKQFEAZZ',
           'value': 0
         }, {
-          'address': 'KIYFEAVBPGZMYNZCGBUSBKMCOHUPNKFYUZS9VDPZBHEIGCKOVEFXPOHQBTJAPYBPVQVTJJRFIDUUUDQQY',
+          'address': 'SFLYEYPJKFKBRLHDVDTQJOTXDDVOGISLPWXPIBZKOM9EFGYKJGKQUYGXEKVKEFMDQNYGBNUVWSR9ZVRBVILFKUBMAQ',
           'value': 0
         }, {
-          'address': 'IEOO9BOG9DNUYL9ZSTSNMIURBRXWTMNKYKNYEMB9AYYCB9XJOYNPSRPZMSACRROQCZZGFJQCOFARH9LVA',
+          'address': 'IEF9MHJRBEUTCB9AHGDJZMXTIYINT9FQUWDLNLTHDBEZF9AGRJVURTRWWSPUZJGGSK9MVRPQNLNHOWFFKGVXHIHVQZ',
           'value': 0
         }, {
-          'address': 'IEF9MHJRBEUTCB9AHGDJZMXTIYINT9FQUWDLNLTHDBEZF9AGRJVURTRWWSPUZJGGSK9MVRPQNLNHOWFFK',
+          'address': 'BOGTSYSZKVPEJNU9XUSHBNBCNIJDCIDZEZUPMCGOAOGURJLTFFWF9BCAPUCPFRGKHCSYB9TNAGXBYMCRBZMERBXWHM',
           'value': 0
         }, {
-          'address': 'BOGTSYSZKVPEJNU9XUSHBNBCNIJDCIDZEZUPMCGOAOGURJLTFFWF9BCAPUCPFRGKHCSYB9TNAGXBYMCRB',
+          'address': 'LQBSSGJHAEAWCOSOLUIVVEOZRWNOXIRESSEEQQDSIJWUDVLNIKCHHUTVPYCHCSWPIJKILRDRPRSAVRVKSLLFGHXCQG',
           'value': 0
         }, {
-          'address': 'AAYPHSRFHZTKUXXXRWWKYPBZURKOER9CZGSWVXVULUZEFDUJM9AVAWHOEFFYIXJBUNZDWZZYQBIXLSTDY',
+          'address': 'AAYPHSRFHZTKUXXXRWWKYPBZURKOER9CZGSWVXVULUZEFDUJM9AVAWHOEFFYIXJBUNZDWZZYQBIXLSTDYW9ANOIQRN',
+          'value': 0
+        }, {
+          'address': 'ERNPNZBJMIVBDVHVZEWSAKJFDHQEWWLUMAKLZCR9BHJN9CRAOZQKIZIZMARQSKYQZ9HEQGKLIMHHGOM9LGAWPBRJCV',
           'value': 0
         }
       ]
@@ -42,30 +45,33 @@ Meteor.startup(function() {
       'addresses': accountList
     }
 
-    HTTP.call('POST', 'http://localhost:999', {'data': findTxCommand}, function(error, result) {
+    HTTP.call('POST', 'http://localhost:14265', {'data': findTxCommand}, function(error, result) {
       if (!error) {
-        var transactions = result.data.transactions;
+        var transactions = result.data.hashes;
+        if (!transactions) {
+          return
+        }
 
         var getTxCommand = {
-          'command': 'getTransactions',
+          'command': 'getTrytes',
           'hashes': transactions
         }
 
-        HTTP.call('POST', 'http://localhost:999', {'data': getTxCommand}, function(e, result2) {
+        HTTP.call('POST', 'http://localhost:14265', {'data': getTxCommand}, function(error, result) {
+          if (!error) {
 
-          if (!e) {
-
-            trytes = result2.data.trytes;
+            trytes = result.data.trytes;
             var analyzeTxCommand = {
               'command': 'analyzeTransactions',
               'trytes': trytes
             }
 
-            HTTP.call('POST', 'http://localhost:999', {'data': analyzeTxCommand}, function(err, data) {
+            HTTP.call('POST', 'http://localhost:14265', {'data': analyzeTxCommand}, function(err, data) {
 
               if (!err) {
 
                 var preparedTransfers = {}
+
                 for (var i = 0; i < data.data.transactions.length; i++) {
                   preparedTransfers[data.data.transactions[i].address] = preparedTransfers[data.data.transactions[i].address] ? preparedTransfers[data.data.transactions[i].address] += parseInt(data.data.transactions[i].value) : preparedTransfers[data.data.transactions[i].address] = parseInt(data.data.transactions[i].value)
                 }
@@ -73,11 +79,11 @@ Meteor.startup(function() {
                 for (var i = 0; i < accounts.addressList.length; i++) {
                   var currAccount = accounts.addressList[i];
 
-                  if (preparedTransfers[currAccount.address] > currAccount.value) {
+                  if (preparedTransfers[currAccount.address.slice(0, -9)] > currAccount.value) {
                     console.log("Bigger!")
                     addresses.update({_id: accounts._id, 'addressList.address': currAccount.address}, {
                       $set: {
-                        'addressList.$.value': preparedTransfers[currAccount.address]
+                        'addressList.$.value': preparedTransfers[currAccount.address.slice(0, -9)]
                       }
                     })
                   }

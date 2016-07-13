@@ -288,7 +288,7 @@ Template.main.onRendered(function() {
 
   Meteor.call('getAccounts', function(error, success) {
     accountList = success.addressList;
-    var total = 59320043461491;
+    var total = 107633378898435;
     for (var i = 0; i < accountList.length; i++) {
       total += accountList[i].value;
     }
@@ -332,7 +332,7 @@ Template.main.helpers({
     return Math.round((value * 100) / 3812798742493) > 90 ? "This address is nearly full. Use another one" : address;
   },
   getTotal: function(accountList) {
-    var total = 59320043461491;
+    var total = 107633378898435;
     for (var i = 0; i < accountList.length; i++) {
       total += accountList[i].value;
     }
