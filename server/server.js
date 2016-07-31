@@ -1,4 +1,20 @@
+import async from 'async';
+
+
 Meteor.startup(function() {
+
+  function makeNodeRequest(command, cb) {
+
+    var options = {
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': JSON.stringify(command).length
+      },
+      data: command
+    };
+
+    return HTTP.call('POST', 'http://localhost:14265', options, cb);
+  }
 
   Meteor.setInterval(function() {
 
@@ -30,8 +46,18 @@ Meteor.startup(function() {
         }, {
           'address': 'ERNPNZBJMIVBDVHVZEWSAKJFDHQEWWLUMAKLZCR9BHJN9CRAOZQKIZIZMARQSKYQZ9HEQGKLIMHHGOM9LGAWPBRJCV',
           'value': 0
+        }, {
+          'address': 'CZWJNAWKREIGSQTRWWMTWMEPPCQFONXFAUDIMAFOUXGTERTALWGSQQ9ULOJUQ9MKOBABMPPVUSDIYYRCECVJXXUDMR',
+          'value': 0
+        }, {
+          'address': '9LBRZHGUHL9PVEGECYAOSRCQZSUEURMCNARXNEYZUIRCBYAUKQKRWIWMQGPMPUFDQKWKVKFOKJIUI9KAKVTDOIRQZT',
+          'value': 0
+        }, {
+          'address': 'QWOVZFHIIFROCKBEMUGPBWRESLNVCGA9WOEGKLAZRPFBOEQDDLAMKXIJHKLBZNFJXMNCLSKTIVKR99PIVBQH99GAZA',
+          'value': 0
         }
       ]
+
       addresses.insert({'addressList': valuesToInsert});
     }
 
@@ -40,63 +66,111 @@ Meteor.startup(function() {
       accountList.push(accounts.addressList[i].address);
     }
 
-    var findTxCommand = {
-      'command': 'findTransactions',
-      'addresses': accountList
-    }
 
-    HTTP.call('POST', 'http://localhost:14265', {'data': findTxCommand}, function(error, result) {
-      if (!error) {
-        var transactions = result.data.hashes;
-        if (!transactions) {
-          return
+    async.waterfall([
+      // FIND TRANSACTIONS
+      function(callback) {
+
+        var findTxCommand = {
+          'command': 'findTransactions',
+          'addresses': accountList
         }
 
-        var getTxCommand = {
-          'command': 'getTrytes',
-          'hashes': transactions
-        }
+        makeNodeRequest(findTxCommand, function(error, result) {
 
-        HTTP.call('POST', 'http://localhost:14265', {'data': getTxCommand}, function(error, result) {
-          if (!error) {
+          if (error) return console.error("Error")
 
-            trytes = result.data.trytes;
-            var analyzeTxCommand = {
-              'command': 'analyzeTransactions',
-              'trytes': trytes
-            }
-
-            HTTP.call('POST', 'http://localhost:14265', {'data': analyzeTxCommand}, function(err, data) {
-
-              if (!err) {
-
-                var preparedTransfers = {}
-
-                for (var i = 0; i < data.data.transactions.length; i++) {
-                  preparedTransfers[data.data.transactions[i].address] = preparedTransfers[data.data.transactions[i].address] ? preparedTransfers[data.data.transactions[i].address] += parseInt(data.data.transactions[i].value) : preparedTransfers[data.data.transactions[i].address] = parseInt(data.data.transactions[i].value)
-                }
-
-                for (var i = 0; i < accounts.addressList.length; i++) {
-                  var currAccount = accounts.addressList[i];
-
-                  if (preparedTransfers[currAccount.address.slice(0, -9)] > currAccount.value) {
-                    console.log("Bigger!")
-                    addresses.update({_id: accounts._id, 'addressList.address': currAccount.address}, {
-                      $set: {
-                        'addressList.$.value': preparedTransfers[currAccount.address.slice(0, -9)]
-                      }
-                    })
-                  }
-                }
-              }
-            })
+          var transactions = result.data.hashes;
+          if (!transactions) {
+            return
           }
+
+          callback(null, transactions);
+        })
+        // GET LATEST MILESTONE
+      }, function(transactions, callback) {
+
+        var getNodeInfo = {
+          'command': 'getNodeInfo'
+        }
+
+        makeNodeRequest(getNodeInfo, function(error, success) {
+
+          if (error) return console.error("Error")
+
+          var milestone = success.data.milestone;
+
+          callback(null, transactions, milestone);
+        })
+        // CHECK WHICH OF THE TRANSACTIONS IS CONFIRMED OR NOT
+      }, function(transactions, milestone, callback) {
+
+        var getInclusionStates = {
+          'command': 'getInclusionStates',
+          'transactions': transactions,
+          'tips': [milestone]
+        }
+
+        makeNodeRequest(getInclusionStates, function(error, success) {
+          var confTxs = [];
+          var states = success.data.states;
+
+          for (var i = 0; i < transactions.length; i++) {
+            if (states[i] === true) {
+              confTxs.push(transactions[i]);
+            }
+          }
+          callback(null, confTxs)
+        })
+      }, function(confTxs, callback) {
+
+        var getTrytes = {
+          'command': 'getTrytes',
+          'hashes': confTxs
+        }
+
+        makeNodeRequest(getTrytes, function(error, success) {
+
+          if (error) return console.log(error);
+
+          var trytes = success.data.trytes;
+          callback(null, trytes);
+        })
+      }, function(trytes, callback) {
+
+        var analyzeTxCommand = {
+          'command': 'analyzeTransactions',
+          'trytes': trytes
+        }
+
+        makeNodeRequest(analyzeTxCommand, function(error, success) {
+
+          var confirmedTxs = success.data.transactions;
+          callback(null, confirmedTxs)
         })
 
-      } else {
-        console.log(error)
       }
-    });
+    ], function(error, result) {
+
+      var preparedTransfers = {}
+
+      for (var i = 0; i < result.length; i++) {
+        preparedTransfers[result[i].address] = preparedTransfers[result[i].address] ? preparedTransfers[result[i].address] += parseInt(result[i].value) : preparedTransfers[result[i].address] = parseInt(result[i].value)
+      }
+
+      for (var i = 0; i < accounts.addressList.length; i++) {
+        var currAccount = accounts.addressList[i];
+
+        if (preparedTransfers[currAccount.address.slice(0, -9)] > currAccount.value) {
+          console.log("Bigger!")
+          addresses.update({_id: accounts._id, 'addressList.address': currAccount.address}, {
+            $set: {
+              'addressList.$.value': preparedTransfers[currAccount.address.slice(0, -9)]
+            }
+          })
+        }
+      }
+    })
   }, 300000)
 })
 
