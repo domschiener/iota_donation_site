@@ -23,37 +23,25 @@ Meteor.startup(function() {
     if (!accounts) {
       var valuesToInsert = [
         {
-          'address': 'IEOO9BOG9DNUYL9ZSTSNMIURBRXWTMNKYKNYEMB9AYYCB9XJOYNPSRPZMSACRROQCZZGFJQCOFARH9LVAFWJFLQPTY',
+          'address': 'V9ILNKSJBEH9QU9LVDASMCCRROQBHTNUNDMXPCWGDGCUEDDVWKSESJBWJ9QRKQBXONJNXD9WHWLISXMDMBBW9W9ANC',
           'value': 0
         }, {
-          'address': 'KIYFEAVBPGZMYNZCGBUSBKMCOHUPNKFYUZS9VDPZBHEIGCKOVEFXPOHQBTJAPYBPVQVTJJRFIDUUUDQQYQRKQFEAZZ',
+          'address': 'GIWJKSZRINLWXVLUULREMXPAEFRIUH9KOKNTOGNTRACJG9PJ9MBLNBXDZEEHKZAHOZYYOZDKAASP9CPZJTVSVUFPJB',
           'value': 0
         }, {
-          'address': 'SFLYEYPJKFKBRLHDVDTQJOTXDDVOGISLPWXPIBZKOM9EFGYKJGKQUYGXEKVKEFMDQNYGBNUVWSR9ZVRBVILFKUBMAQ',
+          'address': 'WI9EWRIOJP9TJLQRGMLUAZUQJFFUJWTMTIZDQQMFCNGXPTYNJRXTUTVVJLOAQOQHNRNGCLLKP9VRFTZMIXBEOJH9IL',
           'value': 0
         }, {
-          'address': 'IEF9MHJRBEUTCB9AHGDJZMXTIYINT9FQUWDLNLTHDBEZF9AGRJVURTRWWSPUZJGGSK9MVRPQNLNHOWFFKGVXHIHVQZ',
+          'address': 'YLIQJNNFPWIXMNWHHOGPOWIHEHAHZZDGFFDLDQBCMHYDLYCJOCPHEMVPNP9NPJOAQWARJBSFNCNIBQDGJDVCLOWVYP',
           'value': 0
         }, {
-          'address': 'BOGTSYSZKVPEJNU9XUSHBNBCNIJDCIDZEZUPMCGOAOGURJLTFFWF9BCAPUCPFRGKHCSYB9TNAGXBYMCRBZMERBXWHM',
+          'address': 'IIBY9YFHMXILVRPPZNTGI9TAPILTKODDHESEJUCNZLSARSLHEPSUIEGJEJPNJF9DOQAZJNKWVJUYCUKVJAXVQVXHFA',
           'value': 0
         }, {
-          'address': 'LQBSSGJHAEAWCOSOLUIVVEOZRWNOXIRESSEEQQDSIJWUDVLNIKCHHUTVPYCHCSWPIJKILRDRPRSAVRVKSLLFGHXCQG',
+          'address': 'ZZLLDOKFKXUXRHWZDHFUPLZ9ZWUNAPWBPIKBHXUVOZCSL9LXNXCHBDRIPWMVLJVIKSZWSJVYG9TMEXVWULYLWXOVOJ',
           'value': 0
         }, {
-          'address': 'AAYPHSRFHZTKUXXXRWWKYPBZURKOER9CZGSWVXVULUZEFDUJM9AVAWHOEFFYIXJBUNZDWZZYQBIXLSTDYW9ANOIQRN',
-          'value': 0
-        }, {
-          'address': 'ERNPNZBJMIVBDVHVZEWSAKJFDHQEWWLUMAKLZCR9BHJN9CRAOZQKIZIZMARQSKYQZ9HEQGKLIMHHGOM9LGAWPBRJCV',
-          'value': 0
-        }, {
-          'address': 'CZWJNAWKREIGSQTRWWMTWMEPPCQFONXFAUDIMAFOUXGTERTALWGSQQ9ULOJUQ9MKOBABMPPVUSDIYYRCECVJXXUDMR',
-          'value': 0
-        }, {
-          'address': '9LBRZHGUHL9PVEGECYAOSRCQZSUEURMCNARXNEYZUIRCBYAUKQKRWIWMQGPMPUFDQKWKVKFOKJIUI9KAKVTDOIRQZT',
-          'value': 0
-        }, {
-          'address': 'QWOVZFHIIFROCKBEMUGPBWRESLNVCGA9WOEGKLAZRPFBOEQDDLAMKXIJHKLBZNFJXMNCLSKTIVKR99PIVBQH99GAZA',
+          'address': 'ZI9PCRVUXZJZMPZPQ9OBLBNZRPCQQXEALZBY9KFPIIVXVNYDKGBMJLTQIKLVQONPAQRUFWBTJUBNGCOATBPNKQBVPB',
           'value': 0
         }
       ]
@@ -98,8 +86,24 @@ Meteor.startup(function() {
 
           if (error) return console.error("Error")
 
-          var milestone = success.data.milestone;
+          var milestoneIndex = success.data.milestoneIndex;
 
+          callback(null, transactions, milestoneIndex);
+        })
+        // GET THE MOST RECENT MILESTONE
+      }, function(transactions, milestoneIndex, callback) {
+
+        var getMilestone = {
+          'command': 'getMilestone',
+          'index': parseInt(milestoneIndex) - 1
+        }
+
+        makeNodeRequest(getMilestone, function(error, success) {
+
+          if (error) return console.error(error);
+
+          var milestone = success.data.milestone;
+          console.log(success.data)
           callback(null, transactions, milestone);
         })
         // CHECK WHICH OF THE TRANSACTIONS IS CONFIRMED OR NOT
@@ -171,7 +175,7 @@ Meteor.startup(function() {
         }
       }
     })
-  }, 300000)
+  }, 60000)
 })
 
 Meteor.methods({

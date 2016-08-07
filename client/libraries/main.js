@@ -288,11 +288,11 @@ Template.main.onRendered(function() {
 
   Meteor.call('getAccounts', function(error, success) {
     accountList = success.addressList;
-    var total = 107633378898435;
+    var total = 0;
     for (var i = 0; i < accountList.length; i++) {
       total += accountList[i].value;
     }
-    var fundingGoal = Math.round(2779530283277761 * 0.05);
+    var fundingGoal = Math.round(2779530283277761 * 0.03);
     var current = Math.round((total * 100) / fundingGoal);
     var config5 = liquidFillGaugeDefaultSettings();
     config5.circleThickness = 0.4;
@@ -332,7 +332,7 @@ Template.main.helpers({
     return Math.round((value * 100) / 3812798742493) > 90 ? "This address is nearly full. Use another one" : address;
   },
   getTotal: function(accountList) {
-    var total = 107633378898435;
+    var total = 0;
     for (var i = 0; i < accountList.length; i++) {
       total += accountList[i].value;
     }
@@ -343,6 +343,6 @@ Template.main.helpers({
 
 Template.main.events({
   'click .participate': function() {
-    window.location = "http://forum.iotatoken.com/t/iota-foundation-donation-info/354";
+    window.location = "http://forum.iotatoken.com/t/iota-foundation-big-deal-and-exchange-update/469";
   }
 })

@@ -8,7 +8,7 @@
           <img src="/logo.png" class="logo">
           <h1 style="font-size: 72px; margin: 35px 0;">IOTA</h1>
         </span>
-        <h1 style="font-size: 44px; margin: 15px 0;">Foundation Funding Progress</h1>
+        <h1 style="font-size: 44px; margin: 15px 0;">Big Deal Funding Progress</h1>
       </center>
     </div>
     <div class="header_btns">
@@ -22,13 +22,20 @@
       {{#with allAddresses}}
         <div class="funded">
           <h1 style="font-size: 62px; margin: 25px 0; color:#fff;">Current vs. Goal</h1>
-          <h1 style="font-size: 34px; margin: 35px 0; color: #fff;"><span style="margin-right: 15px;">{{getTotal this.addressList}} Ti</span> // <span style="margin-left: 15px;">139 Ti</span></h1>
+          <h1 style="font-size: 34px; margin: 35px 0; color: #fff;"><span style="margin-right: 15px;">{{getTotal this.addressList}} Ti</span> // <span style="margin-left: 15px;">83 Ti</span></h1>
         </div>
       {{/with}}
     </div>
   </section>
 
   <section class="addresses">
+    <div class="addresses__title">
+      <h1>Big Deal Sumary</h1>
+    </div>
+    <div style="text-align: center; margin: 40px auto; padding: 0 100px;">
+      <h3>Your contribution towards the Big Deal fund will be treated as a donation. The funds will be used to make it possible for strategic partners - some of which we've been in touch with for months - to acquire a stake in IOTA. This offers an opportunity to get more invaluable partners on board who will help us tremendously in expanding our ecosystem in key areas such as Asia.</h3>
+    </div>
+
     <div class="addresses__title">
       <h1>Foundation Addresses</h1>
     </div>
@@ -42,13 +49,6 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td class="iota__address">
-              FROM CLAIMS
-            </td>
-            <td class="iota__amount">107633378898435</td>
-            <td class="iota__full">No</td>
-          </tr>
           {{#with allAddresses}}
             {{#each this.addressList}}
               <tr class="{{isDone value}}">
